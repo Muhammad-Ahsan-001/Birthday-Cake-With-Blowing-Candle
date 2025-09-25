@@ -1,4 +1,4 @@
-:root {
+ :root {
   --bg: #0f1724;
   --card: #0b1220;
   --accent: #ffb86b;
@@ -33,7 +33,7 @@ body {
 }
 
 /* Birthday Card */
-.card {
+/* .card {
   width: 100%;
   max-width: 440px;
   background: rgba(255, 255, 255, 0.05);
@@ -43,7 +43,7 @@ body {
   box-shadow: 0 10px 40px rgba(2, 6, 23, 0.7), inset 0 0 30px rgba(255, 184, 107, 0.05);
   backdrop-filter: blur(10px);
   animation: fadeIn 1.2s ease;
-}
+} */
 
 h1 {
   font-size: 1.9rem;
@@ -217,4 +217,49 @@ h1 {
   }
 }
 
-.flame.out{opacity:0 !important;transform:translateX(-50%) scale(.6);animation: none !important;}
+.flame.out{opacity:0 !important;transform:translateX(-50%) scale(.6);animation: none !important;} 
+
+.card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 22px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(2, 6, 23, 0.7);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 1.2s ease;
+  position: relative;
+  z-index: 0; /* make sure border stays behind */
+}
+
+/* Animated shiny border */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 3px; /* border thickness */
+  background: linear-gradient(
+    120deg,
+    #ff8b6b,
+    #ffb86b,
+    #ffe66b,
+    #ff8b6b
+  );
+  background-size: 300% 300%;
+  animation: borderMove 6s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none; /* keep buttons clickable */
+  z-index: -1; /* keep behind content */
+}
+
+@keyframes borderMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
