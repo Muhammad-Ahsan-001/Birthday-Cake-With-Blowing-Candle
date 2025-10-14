@@ -45,7 +45,7 @@ body {
   animation: fadeIn 1.2s ease;
 } */
 
-h1 {
+#title {
   font-size: 1.9rem;
   margin: 8px 0;
   background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad390);
@@ -53,6 +53,12 @@ h1 {
   -webkit-text-fill-color: transparent;
   animation: glow 2.5s ease-in-out infinite alternate;
 }
+.heart {
+  all: unset; /* removes inherited styles */
+  display: inline;
+  cursor: default;
+}
+
 
 .subtitle {
   color: var(--muted);
