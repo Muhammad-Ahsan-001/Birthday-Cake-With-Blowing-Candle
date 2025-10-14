@@ -1,30 +1,37 @@
-// script.js
 const startBtn = document.getElementById('startBtn');
 const message = document.getElementById('message');
 const flames = document.querySelectorAll('.flame');
 const audio = document.getElementById('happyAudio');
+const tempMsg = document.getElementById('tempMsg');
 
 let listening = false;
 let audioCtx, analyser, dataArray, sourceNode;
 let lastBlowTime = 0;
+let candlesblown=0;
+
+let blowCount = 0; // to track how many times user has blown
 
 startBtn.addEventListener('click', async () => {
   if (listening) return;
   try {
-    Array.from(document.querySelectorAll(".flame")).map(item=>{item.style.background='radial-gradient(circle at 30% 30%,#ffe28a 0,#ffb84d 50%,#ff6f3c 100%)'
-      item.style.transform='translateX(-50%)'
-      item.style.boxShadow='0 6px 12px rgba(255,120,30,0.25)'
-    })
+    // light candles
+    flames.forEach(item => {
+      item.style.background = 'radial-gradient(circle at 30% 30%,#ffe28a 0,#ffb84d 50%,#ff6f3c 100%)';
+      item.style.transform = 'translateX(-50%)';
+      item.style.boxShadow = '0 6px 12px rgba(255,120,30,0.25)';
+      item.classList.remove('out');
+    });
+
     await initMic();
     startBtn.textContent = 'Listening... Blow to extinguish!';
+    message.textContent = 'Blow into your mic now!';
   } catch (err) {
     message.textContent = 'Mic access failed. Check permissions.';
     console.error(err);
   }
 });
 
-async function initMic(){
-  // user gesture happened (click), which helps browsers allow audio
+async function initMic() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   sourceNode = audioCtx.createMediaStreamSource(stream);
@@ -33,47 +40,56 @@ async function initMic(){
   sourceNode.connect(analyser);
   dataArray = new Uint8Array(analyser.fftSize);
   listening = true;
-  message.textContent = 'Blow into your mic now!';
   window.requestAnimationFrame(checkBlow);
 }
 
-function computeRMS(buf){
+function computeRMS(buf) {
   let sum = 0;
-  for (let i=0;i<buf.length;i++){
+  for (let i = 0; i < buf.length; i++) {
     const v = (buf[i] - 128) / 128;
-    sum += v*v;
+    sum += v * v;
   }
   return Math.sqrt(sum / buf.length);
 }
 
-function checkBlow(){
+function checkBlow() {
   analyser.getByteTimeDomainData(dataArray);
-  const rms = computeRMS(dataArray); // ~0.01 quiet, >0.15 loud
-  // threshold tuned to typical phone blow; tweak if needed
-  const THRESHOLD = 0.17;
+  const rms = computeRMS(dataArray);
+  const THRESHOLD = 0.3;
+
   if (rms > THRESHOLD && (Date.now() - lastBlowTime > 1200)) {
     lastBlowTime = Date.now();
-    onBlowDetected();
+    blowCount++;
+
+    if (blowCount === 1) {
+      showTempMessage('nahhh blow stronger 😤');
+    } else if (blowCount === 2) {
+      showTempMessage('almost there 💨');
+    } else if (blowCount >= 3) {
+      onBlowDetected();
+    }
   }
+
   window.requestAnimationFrame(checkBlow);
 }
 
-function onBlowDetected(){
+function onBlowDetected() {
   message.textContent = 'Nice! Candles blown 🎉';
-  startBtn.textContent='Blow again for more confetti!!'
+  startBtn.textContent = 'Blow again for more confetti!!';
   extinguishCandles();
   launchConfetti();
   playHappyAudio();
+  // blowCount = 0; // reset so user can play again
 }
 
-function extinguishCandles(){
+function extinguishCandles() {
   flames.forEach(f => {
     f.classList.add('out');
-    f.style.opcacity='0 !important'
+    f.style.opacity = '0';
   });
 }
 
-function launchConfetti(){
+function launchConfetti() {
   if (window.confetti) {
     confetti({
       particleCount: 140,
@@ -83,27 +99,33 @@ function launchConfetti(){
   }
 }
 
-function playHappyAudio(){
-  // some browsers block autoplay — try to play, or show message if blocked
+function playHappyAudio() {
   if (!audio) return;
-  audio.play().catch(()=> {
-    // blocked by autoplay policies. show hint
+  audio.play().catch(() => {
     message.textContent = 'Tap Play to hear the song';
-    // add a play button below
     addManualPlay();
   });
 }
 
-function addManualPlay(){
+function addManualPlay() {
   if (document.getElementById('playManual')) return;
   const btn = document.createElement('button');
   btn.id = 'playManual';
   btn.className = 'btn';
   btn.textContent = 'Play song';
   btn.style.marginTop = '12px';
-  btn.onclick = ()=> {
+  btn.onclick = () => {
     audio.play();
     btn.remove();
   };
   document.querySelector('.card').appendChild(btn);
+}
+
+function showTempMessage(msg) {
+  tempMsg.textContent = msg;
+  tempMsg.classList.add('show');
+
+  setTimeout(() => {
+    tempMsg.classList.remove('show');
+  }, 2500);
 }
