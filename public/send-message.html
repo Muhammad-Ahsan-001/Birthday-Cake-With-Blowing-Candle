@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send a Birthday Message to AHSAN 🎁</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #ffe7e7;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background: #ff4d6d;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>💌 Send your wish to AHSANiii!</h2>
+    <input id="fromInput" type="text" placeholder="From?" />
+    <input id="wishInput" type="text" placeholder="Write your wish..." />
+    <button id="sendBtn">Send Wish</button>
+    <p id="status"></p>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+        push,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBH13dVREk4nb-jRXhnd--xVHeZ4yUVFsI",
+        authDomain: "bd-wishes-efd0d.firebaseapp.com",
+        databaseURL: "https://bd-wishes-efd0d-default-rtdb.firebaseio.com",
+        projectId: "bd-wishes-efd0d",
+        storageBucket: "bd-wishes-efd0d.firebasestorage.app",
+        messagingSenderId: "180185640583",
+        appId: "1:180185640583:web:a5fe55a5997269d5d5d222",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      const fromInput = document.getElementById("fromInput");
+      const wishInput = document.getElementById("wishInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const status = document.getElementById("status");
+
+      sendBtn.addEventListener("click", async () => {
+        const from = fromInput.value.trim();
+        const wish = wishInput.value.trim();
+        if (!from) {
+          status.textContent = "Please fill 'From' field!";
+          return;
+        }
+        if (!wish) {
+          status.textContent = "Please write a wish!";
+          return;
+        }
+
+        try {
+          await push(ref(db, "birthdayMessages"), {
+            from,
+            wish,
+            timestamp: Date.now(),
+          });
+          status.textContent = "✅ Wish sent!";
+          fromInput.value = "";
+          wishInput.value = "";
+        } catch (error) {
+          console.error(error);
+          status.textContent = "❌ Error sending wish.";
+        }
+      });
+    </script>
+  </body>
+</html>

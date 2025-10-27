@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday AHSANiii! 🎉</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- confetti lib -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+      /* Improved styles for wishes list */
+      #wishList {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 300px; /* limit height so it doesn’t overflow */
+        overflow-y: auto; /* scroll if too many messages */
+        padding-right: 5px;
+      }
+
+      /* Individual wish card */
+      .wishCard {
+        background: linear-gradient(135deg, #fff8e7, #ffe0e0);
+        padding: 10px 14px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(255, 182, 193, 0.3);
+        font-family: "Poppins", sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        color: #333;
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+      }
+
+      /* Hover effect for interactivity */
+      .wishCard:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 14px rgba(255, 105, 180, 0.4);
+      }
+
+      /* Sender name styling */
+      .wishCard span {
+        font-weight: 600;
+        color: #ff3b6a;
+      }
+
+      /* Scrollbar styling (for a nice touch) */
+      #wishList::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #wishList::-webkit-scrollbar-thumb {
+        background: #ffb6c1;
+        border-radius: 3px;
+      }
+
+      #wishList::-webkit-scrollbar-thumb:hover {
+        background: #ff8fa3;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="card">
+        <h1>
+          <span id="title">Happy Birthday AHSANi</span>
+          <span class="heart">❤️</span>
+          🎂
+        </h1>
+        <h2 id="subtitle">Make a wish and blow out the candles!</h2>
+        <div id="tempMsg"></div>
+
+        <div class="cake-wrap">
+          <div class="cake">
+            <div class="layer"></div>
+            <div class="layer small"></div>
+            <div class="candles">
+              <div class="candle"><div class="flame"></div></div>
+              <div class="candle"><div class="flame"></div></div>
+              <div class="candle"><div class="flame"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <button id="startBtn" class="btn">Light the candles</button>
+        <div id="message" class="message">Waiting for you to allow mic...</div>
+
+        <h3>💌 Birthday Wishes:</h3>
+        <div id="wishList"></div>
+
+        <audio
+          id="happyAudio"
+          src="audio/happy-bday.mp3"
+          preload="auto"
+        ></audio>
+      </div>
+    </main>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
